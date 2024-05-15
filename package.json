@@ -18,9 +18,13 @@
     "express": "^4.19.2",
     "joi": "^17.13.1",
     "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
     "mongoose": "^8.3.4",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.0",
     "zxcvbn": "^4.4.2"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5"
   }
 }

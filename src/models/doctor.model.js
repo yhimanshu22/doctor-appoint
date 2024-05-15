@@ -75,4 +75,4 @@ doctorSchema.validateDoctor = async function(){
     return docJoischema.validateAsync(this.toObject());
 };
 
-module.exports.doctor = mongoose.model('doctor',doctorSchema);
+export const doctorModel = mongoose.model('doctor',doctorSchema);

@@ -73,7 +73,7 @@ const userSchema = new mongoose.Schema({
         type:Boolean,
         default:false,
     },
-    Notification:{
+    notification:{
         type:Array,
         default:[],
     },
@@ -89,4 +89,4 @@ userSchema.validateUser = async function(user){
     return userjoischema.validateAsync(user);
 }
 
-module.exports.User = mongoose.model('User',userSchema);
+export const User = mongoose.model('User',userSchema);

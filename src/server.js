@@ -7,12 +7,18 @@ dotenv.config({
     path:'./.env'
 })
 
+// Import routes
+import userRoutes from './routes/user.route.js'
+
+// Mount userRoutes onto /user endpoint
+app.use('/user', userRoutes);
+
 connectDB()
-.then(()=>{
-    app.listen(process.env.PORT || 8000,()=>{
-        console.log(`server is running at port:${process.env.PORT}`.bgMagenta);
+    .then(() => {
+        app.listen(process.env.PORT || 8000, () => {
+            console.log(`Server is running at port: ${process.env.PORT}`.bgMagenta);
+        });
     })
-})
-.catch((err)=>{
-    console.log(`mongodb connection failed`.bgRed);
-})
+    .catch((err) => {
+        console.log(`MongoDB connection failed`.bgRed);
+    });

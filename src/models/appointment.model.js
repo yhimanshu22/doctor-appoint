@@ -45,4 +45,4 @@ appointmentschema.valiadateAppointment = async function(){
     return appointJoischema.validateAsync(this.toObject());
 }
 
-module.exports.appointment = mongoose.model('appointment',appointmentschema);
+export const appointmentModel = mongoose.model('appointment',appointmentschema);
