@@ -226,7 +226,6 @@ const deleteAllNotification = async (req, res) => {
 };
 
 
-
 const getAllDoctorsController = async (req, res) => {
   try {
     // Find all doctors with status 'approved'
@@ -252,18 +251,89 @@ const getAllDoctorsController = async (req, res) => {
 };
 
 
-const bookingAvailabilityController = async(req,res)=>{
+const bookingAvailabilityController = async (req, res) => {
+  try {
+    const date = moment(req.body.date, 'DD-MM-YYYY').toISOString();
+    const startTime = moment(req.body.time, 'HH:mm').toISOString();
+    const doctorId = req.body.doctorId;
 
-}
+    // Find the doctor by ID
+    const doctor = await doctorModel.findById(doctorId);
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: "Doctor not found",
+      });
+    }
+
+    // Check if the appointment time is within the doctor's working hours
+    const start = moment(doctor.startTime, 'HH:mm').toISOString();
+    const end = moment(doctor.endTime, 'HH:mm').toISOString();
+    if (!moment(startTime).isBetween(start, end, undefined, '[]')) {
+      return res.status(200).json({
+        success: false,
+        message: "Appointment not available (outside working hours)",
+      });
+    }
+
+    // Check if there are any existing appointments for the same doctor, date, and time
+    const appointments = await appointmentModel.find({
+      doctorId,
+      date,
+      time: startTime,
+    });
+
+    if (appointments.length > 0) {
+      return res.status(200).json({
+        success: false,
+        message: "Appointment not available (already booked)",
+      });
+    }
+
+    // If no conflicts, appointment is available
+    return res.status(200).json({
+      success: true,
+      message: "Appointment available",
+    });
+  } catch (error) {
+    console.error(error);
+    
+    return res.status(500).json({
+      success: false,
+      message: "Error checking appointment availability",
+      error: error.message,
+    });
+  }
+};
+
 
 
 const bookAppointmentController = async(req,res)=>{
-
+   
 }
 
-const userAppointmentsController = async(req,res)=>{
+const userAppointmentsController = async (req, res) => {
+  try {
+    const userId = req.body.userId;
 
-}
+    // Find appointments for the given user ID
+    const appointments = await appointmentModel.find({ userId });
+
+    res.status(200).json({
+      success: true,
+      message: 'User appointments fetched successfully',
+      data: appointments,
+    });
+  } catch (error) {
+    console.error('Error fetching user appointments:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching user appointments',
+      error: error.message,
+    });
+  }
+};
+
 
 
 
