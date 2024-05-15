@@ -309,7 +309,69 @@ const bookingAvailabilityController = async (req, res) => {
 
 
 const bookAppointmentController = async(req,res)=>{
-   
+   try {
+    const date = moment(req.body.date, "DD-MM-YYYY").toISOString();
+    const startTime = moment(req.body.time, "HH:mm").toISOString();
+    const doctorId = req.body.doctorId;
+    const doctor = await doctorModel.findById(doctorId);
+    if (!doctor) {
+      return res.status(404).send({
+        message: "Doctor Not Found",
+        success: false,
+      });
+    }
+    const start = moment(doctor.starttime, "HH:mm").toISOString();
+    const end = moment(doctor.endtime, "HH:mm").toISOString();
+    if (!moment(startTime).isBetween(start, end, undefined, "[]")) {
+      return res.status(400).send({
+        message: "Selected Time Is Not Within Doctor's Available Range",
+        success: false,
+      });
+    }
+    const appointments = await appointmentModel.find({
+      doctorId,
+      date,
+      status: "approved"
+    });
+    if (appointments.length >= doctor.maxPatientsPerDay) {
+      return res.status(400).send({
+        message: "Maximum Number Of Appointments Reached For This Day",
+        success: false,
+      });
+    }
+    const existingAppointment = await appointmentModel.findOne({
+      doctorId,
+      date,
+      time: startTime,
+      status: "approved"
+    });
+    if (existingAppointment) {
+      return res.status(400).send({
+        message: "Appointment Already Booked For This Time Slot",
+        success: false,
+      });
+    }
+    const newAppointment = new appointmentModel({
+      doctorId,
+      userId: req.body.userId,
+      date,
+      time: startTime,
+      doctorInfo: req.body.doctorInfo,
+      userInfo: req.body.userInfo,
+    });
+    await newAppointment.save();
+    return res.status(200).send({
+      success: true,
+      message: "Appointment Booked Successfully",
+    });
+   } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success:false,
+      error,
+      message:'error in booking appointment'
+    })
+   }
 }
 
 const userAppointmentsController = async (req, res) => {
