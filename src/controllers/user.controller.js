@@ -307,7 +307,6 @@ const bookingAvailabilityController = async (req, res) => {
 };
 
 
-
 const bookAppointmentController = async(req,res)=>{
    try {
     const date = moment(req.body.date, "DD-MM-YYYY").toISOString();
@@ -374,6 +373,7 @@ const bookAppointmentController = async(req,res)=>{
    }
 }
 
+
 const userAppointmentsController = async (req, res) => {
   try {
     const userId = req.body.userId;
@@ -400,4 +400,4 @@ const userAppointmentsController = async (req, res) => {
 
 
 
-export {loginController,registerController,authController}
+export {loginController,registerController,authController,applyNewDoctorController,userAppointmentsController,bookAppointmentController,bookingAvailabilityController,getAllDoctorsController,getAllNotificationController,deleteAllNotification,}
